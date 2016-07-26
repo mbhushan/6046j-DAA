@@ -39,20 +39,20 @@ public class QuickSort {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for (int i=0; i<10; i++) {
-			System.out.print(A[i] + " ");
-		}
+//		for (int i=0; i<10; i++) {
+//			System.out.print(A[i] + " ");
+//		}
 		System.out.println();
 		System.out.println("A size: " + A.length);
 		int [] B = Arrays.copyOf(A, A.length);
 		System.out.println("number of comparisons, first element as pivot: " + quickSort(B));
-		System.out.println(Arrays.toString(B));
+		//System.out.println(Arrays.toString(B));
 		int [] C = Arrays.copyOf(A, A.length);
 		System.out.println("number of comparisons, last element as pivot: " + quickSort2(C));
-		System.out.println(Arrays.toString(C));
+		//System.out.println(Arrays.toString(C));
 		int [] D = Arrays.copyOf(A, A.length);
 		System.out.println("number of comparisons, median of 3 as pivot: " + quickSort3(D));
-		System.out.println(Arrays.toString(D));
+		//System.out.println(Arrays.toString(D));
 		
 	}
 
