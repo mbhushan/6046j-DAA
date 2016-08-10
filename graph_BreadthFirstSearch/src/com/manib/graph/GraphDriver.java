@@ -2,9 +2,11 @@ package com.manib.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 
 public class GraphDriver {
 	private Graph graph;
@@ -16,6 +18,8 @@ public class GraphDriver {
 		int src = 1;
 		gd.bfs(src);
 		gd.shortestPath(src);
+		
+		gd.dfs(src);
 	}
 	
 	public void initGraph() {
@@ -46,6 +50,14 @@ public class GraphDriver {
 		}
 		graph.doBFS(src);
 	}
+	
+	public void dfs(int src) {
+		if (graph == null) {
+			System.out.println("graph is empty, DFS not possible!");
+			return;
+		}
+		graph.depthFirstSearch(src);
+	}
 }
 
 class Graph {
@@ -64,6 +76,30 @@ class Graph {
 		//undirected graph, connect nodes u & v from either side.
 		this.gnodes[u].neighbors.add(gnodes[v]);
 		this.gnodes[v].neighbors.add(gnodes[u]);
+	}
+	
+	//do DFS
+	public void depthFirstSearch(int src) {
+		boolean [] visited = new boolean[this.vertices + 1];
+		List<Integer> result = new ArrayList<Integer>();
+		dfsUtil(src, visited, result);
+		
+		Collections.reverse(result);
+		System.out.println("dfs traversal: ");
+		System.out.println(result.toString());
+	}
+	
+	private void dfsUtil(int u, boolean [] visited, List<Integer> result) {
+		visited[u] = true;
+		List<GraphNode> vList = gnodes[u].neighbors;
+		int size = vList.size();
+		for (int i=0; i<size; i++) {
+			GraphNode v = vList.get(i);
+			if (!visited[v.label]) {
+				dfsUtil(v.label, visited, result);
+			}
+		}
+		result.add(u);
 	}
 
 	//computes shortest paths to all the vertices in the undirected graph. all edges have weight 1 here.
