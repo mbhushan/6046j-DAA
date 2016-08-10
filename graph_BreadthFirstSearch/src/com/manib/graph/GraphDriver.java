@@ -1,6 +1,7 @@
 package com.manib.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -14,6 +15,7 @@ public class GraphDriver {
 		
 		int src = 1;
 		gd.bfs(src);
+		gd.shortestPath(src);
 	}
 	
 	public void initGraph() {
@@ -27,6 +29,14 @@ public class GraphDriver {
 		this.graph.addEdge(4, 6);
 		this.graph.addEdge(5, 6);
 		this.graph.printGraph();
+	}
+	
+	public void shortestPath(int src) {
+		if (graph == null) {
+			System.out.println("graph is empty, no shortest path possible!");
+			return;
+		}
+		graph.shortestPath(src);
 	}
 	
 	public void bfs(int src) {
@@ -56,6 +66,38 @@ class Graph {
 		this.gnodes[v].neighbors.add(gnodes[u]);
 	}
 
+	//computes shortest paths to all the vertices in the undirected graph. all edges have weight 1 here.
+	public void shortestPath(int src) {
+		boolean [] visited = new boolean[this.vertices+1];
+		int [] distances = new int[this.vertices+1];
+		Arrays.fill(distances, Integer.MAX_VALUE);
+		
+		Queue<GraphNode> queue = new LinkedList<GraphNode>();
+		List<GraphNode> result  = new ArrayList<GraphNode>();
+		//mark src visited and put it in queue
+		queue.add(gnodes[src]);
+		visited[src] = true;
+		distances[src] = 0;
+		
+		while (!queue.isEmpty()) {
+			GraphNode u = queue.remove();
+			result.add(u);
+			List<GraphNode> vList = u.neighbors;
+			int size = vList.size();
+			for (int i=0; i<size; i++) {
+				GraphNode v = vList.get(i);
+				if (!visited[v.label]) {
+					visited[v.label] = true;
+					distances[v.label] = distances[u.label] + 1;
+					queue.add(v);
+				}
+			}
+		}
+		System.out.println("shortest distance from " + src + " to all vertices: ");
+		for (int i=1; i<= this.vertices; i++) {
+			System.out.println("src: " + src + "; dest: " + i +"; distance: " + distances[i]);
+		}
+	}
 	
 	public void doBFS(int src) {
 		boolean [] visited = new boolean[this.vertices+1];
