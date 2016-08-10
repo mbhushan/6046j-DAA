@@ -1,7 +1,9 @@
 package com.manib.graph;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class GraphDriver {
 	private Graph graph;
@@ -9,6 +11,9 @@ public class GraphDriver {
 	public static void main(String[] args) {
 		GraphDriver gd = new GraphDriver();
 		gd.initGraph();
+		
+		int src = 1;
+		gd.bfs(src);
 	}
 	
 	public void initGraph() {
@@ -22,6 +27,14 @@ public class GraphDriver {
 		this.graph.addEdge(4, 6);
 		this.graph.addEdge(5, 6);
 		this.graph.printGraph();
+	}
+	
+	public void bfs(int src) {
+		if (graph == null) {
+			System.out.println("graph is empty, BFS not possible!");
+			return;
+		}
+		graph.doBFS(src);
 	}
 }
 
@@ -42,9 +55,34 @@ class Graph {
 		this.gnodes[u].neighbors.add(gnodes[v]);
 		this.gnodes[v].neighbors.add(gnodes[u]);
 	}
+
 	
-	public void doBFS() {
+	public void doBFS(int src) {
+		boolean [] visited = new boolean[this.vertices+1];
+		Queue<GraphNode> queue = new LinkedList<GraphNode>();
+		List<GraphNode> result  = new ArrayList<GraphNode>();
+		//mark src visited and put it in queue
+		queue.add(gnodes[src]);
+		visited[src] = true;
 		
+		while (!queue.isEmpty()) {
+			GraphNode u = queue.remove();
+			result.add(u);
+			List<GraphNode> vList = u.neighbors;
+			int size = vList.size();
+			for (int i=0; i<size; i++) {
+				GraphNode v = vList.get(i);
+				if (!visited[v.label]) {
+					visited[v.label] = true;
+					queue.add(v);
+				}
+			}
+		}
+		System.out.println("BFS traversal: ");
+		for (GraphNode gn: result) {
+			System.out.print(gn.label + " ");
+		}
+		System.out.println();
 	}
 	
 	public void printGraph() {
