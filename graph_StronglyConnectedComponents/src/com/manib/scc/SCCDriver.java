@@ -1,7 +1,11 @@
 package com.manib.scc;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Stack;
 
 public class SCCDriver {
@@ -14,8 +18,28 @@ public class SCCDriver {
 		
 		sd.initGraph();
 		
+		//sd.readInput();
 		sd.findStronglyConnectedComponents();
 		
+	}
+	
+	public void readInput() {
+		this.vertices = 875714;
+		this.graph = new Graph(this.vertices);
+		
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader("data/scc.txt"));
+			String input = null;
+			while ((input =br.readLine()) != null) {
+				String [] str = input.trim().split(" ");
+				int u = Integer.parseInt(str[0].trim());
+				int v = Integer.parseInt(str[1].trim());
+				this.graph.edges().add(new Edge(u, v));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void initGraph() {
@@ -46,12 +70,13 @@ public class SCCDriver {
 	public void findStronglyConnectedComponents() {
 		List<Edge> edges = this.graph.edges();
 		this.graph = null;
-		for (Edge e: edges) {
-			System.out.println(e.toString());
-		}
+//		for (Edge e: edges) {
+//			System.out.println(e.toString());
+//		}
 		//reverse the edges and construct graph
 		this.graph = new Graph(this.vertices); 
 		int size= edges.size();
+		System.out.println("edge size: " + size);
 		for (int i=0; i<size; i++) {
 			this.graph.addEdge(edges.get(i).v, edges.get(i).u);
 		}
@@ -97,6 +122,7 @@ class Graph {
 	
 	public int findSCC(Stack<Integer> finishTimeOrder) {
 		boolean [] visited = new boolean[this.vertices+1];
+		PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>(5);
 		
 		int sccCount = 0;
 		while (!finishTimeOrder.isEmpty()) {
@@ -105,10 +131,19 @@ class Graph {
 			if (!visited[u]) {
 				dfs(u, visited, path);
 				System.out.println("SCC: " + path.toString());
+				if (minHeap.size() <= 5) {
+					minHeap.add(path.size());
+				} else {
+					int val = path.size();
+					if (val > minHeap.peek()) {
+						minHeap.remove();
+						minHeap.add(val);
+					}
+				}
 				++sccCount;
 			}
 		}
-		
+		System.out.println("top 5 scc sizes: " + minHeap.toString());
 		return sccCount;
 	}
 	
@@ -119,9 +154,10 @@ class Graph {
 			if (visited[i]) continue;
 			dfs(i, visited, stack);
 		}
-		System.out.println("ordering is: ");
-		System.out.println("top: " + stack.peek());
-		System.out.println(stack.toString());
+		System.out.println("ordering got!");
+//		System.out.println("ordering is: ");
+//		System.out.println("top: " + stack.peek());
+//		System.out.println(stack.toString());
 		return stack;
 	}
 	
